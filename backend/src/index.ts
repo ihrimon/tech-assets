@@ -3,6 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
+import keepAliveCron from './lib/cron';
 
 import { clerkMiddleware } from '@clerk/express';
 import { getEnv } from './lib/env';
@@ -47,4 +48,7 @@ if (fs.existsSync(publicDir)) {
 
 app.listen(env.PORT, () => {
   console.log('Listening on port:', env.PORT);
+  if (env.NODE_ENV === 'production') {
+    keepAliveCron.start();
+  }
 });
