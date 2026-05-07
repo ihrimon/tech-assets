@@ -1,12 +1,6 @@
-import {
-  Show,
-  SignInButton,
-  SignUpButton,
-  useAuth,
-  UserButton,
-} from '@clerk/react';
-import PageLoader from './components/PageLoader';
+import { useAuth } from '@clerk/react';
 import Navbar from './components/Navbar';
+import PageLoader from './components/PageLoader';
 
 function App() {
   const { isLoaded } = useAuth();
@@ -17,15 +11,6 @@ function App() {
   return (
     <>
       <header>
-        <Show when='signed-out'>
-          <SignInButton mode='modal' />
-          <SignUpButton mode='modal' />
-        </Show>
-
-        <Show when='signed-in'>
-          <UserButton />
-        </Show>
-
         <Navbar />
         <button className='btn btn-primary'>DaisyUI Working</button>
       </header>
