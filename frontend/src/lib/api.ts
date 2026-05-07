@@ -5,7 +5,7 @@ const base = typeof raw === 'string' ? raw.replace(/\/+$/, '') : ''; // remove t
 
 // this is an authenticated fetch req that we use to send reqs to our api
 export async function apiFetch(path, opts = {}) {
-  const { getToken, method = 'GET', body } = opts;
+  const { getToken, method = 'GET', body } : { getToken?: () => Promise<string | null>, method?: string, body?: any } = opts;
   const headers = { 'Content-Type': 'application/json' };
 
   if (getToken) {
@@ -16,6 +16,7 @@ export async function apiFetch(path, opts = {}) {
   }
 
   let res;
+
   try {
     res = await fetch(`${base}${path}`, {
       method,

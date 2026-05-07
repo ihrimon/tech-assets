@@ -1,8 +1,15 @@
-import { Show, SignInButton, SignUpButton, useAuth, UserButton } from '@clerk/react';
+import {
+  Show,
+  SignInButton,
+  SignUpButton,
+  useAuth,
+  UserButton,
+} from '@clerk/react';
 import PageLoader from './components/PageLoader';
+import Navbar from './components/Navbar';
 
 function App() {
-  const {isLoaded} = useAuth();
+  const { isLoaded } = useAuth();
 
   if (!isLoaded) {
     return <PageLoader />;
@@ -14,11 +21,13 @@ function App() {
           <SignInButton mode='modal' />
           <SignUpButton mode='modal' />
         </Show>
+
         <Show when='signed-in'>
           <UserButton />
         </Show>
-        <button className='btn'>Test</button>
-        <button className='btn btn-primary'>Primary</button>
+
+        <Navbar />
+        <button className='btn btn-primary'>DaisyUI Working</button>
       </header>
     </>
   );
