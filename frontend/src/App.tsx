@@ -1,9 +1,11 @@
 import { useAuth } from '@clerk/react';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import Layout from './components/Layout';
 import PageLoader from './components/PageLoader';
 import CartPage from './pages/CartPage';
 import HomePage from './pages/HomePage';
+import OrdersPage from './pages/OrderPage';
+import CheckoutReturnPage from './pages/CheckoutReturnPage';
 
 function App() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -16,11 +18,11 @@ function App() {
         <Route path='/' element={<HomePage />} />
         <Route path='/cart' element={<CartPage />} />
         {/* <Route path='/product/:slug' element={<ProductDetailPage />} /> */}
-        {/* <Route
+        <Route
           path='/orders'
           element={isSignedIn ? <OrdersPage /> : <Navigate to={'/'} replace />}
-        /> */}
-        {/* <Route path='/checkout/return' element={<CheckoutReturnPage />} /> */}
+        />
+        <Route path='/checkout/return' element={<CheckoutReturnPage />} />
 
         {/* <Route path='/demo-sentry' element={<SentryDemoPage />} /> */}
 
