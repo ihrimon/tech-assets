@@ -7,9 +7,9 @@ export const useCart = create(
     (set, get) => ({
       items: [],
 
-      addItem(productId, qty = 1) {
+      addItem(productId: string, qty = 1) {
         const items = [...get().items];
-        const i = items.findIndex((item) => item.productId === productId);
+        const i = items.findIndex((item: { productId: string }) => item.productId === productId);
         if (i >= 0) {
           items[i] = { ...items[i], quantity: items[i].quantity + qty };
         } else {
@@ -18,20 +18,20 @@ export const useCart = create(
         set({ items });
       },
 
-      removeItem(productId) {
+      removeItem(productId: string) {
         set({
-          items: get().items.filter((item) => item.productId !== productId),
+          items: get().items.filter((item: { productId: string }) => item.productId !== productId),
         });
       },
 
-      setQty(productId, quantity) {
+      setQty(productId: string, quantity: number) {
         if (quantity <= 0) {
           set({
-            items: get().items.filter((item) => item.productId !== productId),
+            items: get().items.filter((item: { productId: string }) => item.productId !== productId),
           });
           return;
         }
-        const items = get().items.map((item) =>
+        const items = get().items.map((item: { productId: string; quantity: number }) =>
           item.productId === productId ? { ...item, quantity } : item,
         );
         set({ items });
