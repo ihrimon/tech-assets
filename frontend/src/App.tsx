@@ -5,8 +5,12 @@ import PageLoader from './components/PageLoader';
 import CartPage from './pages/CartPage';
 import CheckoutReturnPage from './pages/CheckoutReturnPage';
 import HomePage from './pages/HomePage';
+import OrderChatPage from './pages/OrderChatPage';
+import OrderDetailPage from './pages/OrderDetailPage';
 import OrdersPage from './pages/OrderPage';
+import OrderSummaryPage from './pages/OrderSummaryPage';
 import ProductDetailPage from './pages/ProductDetailsPage';
+import { SentryDemoPage } from './pages/SentryDemoPage';
 
 function App() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -25,7 +29,7 @@ function App() {
         />
         <Route path='/checkout/return' element={<CheckoutReturnPage />} />
 
-        {/* <Route path='/demo-sentry' element={<SentryDemoPage />} /> */}
+        <Route path='/demo-sentry' element={<SentryDemoPage />} />
 
         {/* <Route
           path='/orders/:id/call'
@@ -42,10 +46,10 @@ function App() {
         /> */}
 
         {/* NESTED ROUTES */}
-        {/* <Route path='/orders/:id' element={<OrderDetailPage />}>
+        <Route path='/orders/:id' element={<OrderDetailPage />}>
           <Route index element={<OrderSummaryPage />} />
           <Route path='chat' element={<OrderChatPage />} />
-        </Route> */}
+        </Route>
       </Routes>
     </Layout>
   );
