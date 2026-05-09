@@ -1,6 +1,5 @@
 import { Show, SignInButton, useAuth, UserButton } from '@clerk/react';
 import { useQuery } from '@tanstack/react-query';
-import { apiFetch } from '../lib/api';
 import { Link } from 'react-router';
 
 import {
@@ -11,7 +10,10 @@ import {
   ShoppingCartIcon,
   StoreIcon,
 } from 'lucide-react';
+
+import { apiFetch } from '../lib/api';
 import { Button } from './ui/button';
+import { useCart } from '../store/cart';
 
 const Navbar = () => {
   const { getToken, isSignedIn } = useAuth();
@@ -24,88 +26,107 @@ const Navbar = () => {
 
   const role = meData?.user?.role;
 
-  // const cartCount = useCart((s) =>
-  //   s.items.reduce((n, line) => n + line.quantity, 0),
-  // );
 
-  const cartCount = 5; // TODO: implement cart count
+ const cartCount = useCart((s) =>
+   s.items.reduce((n, line) => n + line.quantity, 0),
+ );
 
   return (
-    <header className='sticky top-0 z-50 border-b border-base-300 bg-base-100/95 shadow-sm backdrop-blur-md'>
-      <div className='navbar mx-auto min-h-14 max-w-7xl px-4 py-2.5 md:px-6 md:py-3'>
-        <div className='flex-1'>
+    <header className='sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/70'>
+      <div className='mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6'>
+        {/* Logo */}
+        <div className='flex items-center'>
           <Link
             to='/'
-            className='btn btn-ghost gap-2 px-2 font-mono text-lg font-semibold uppercase tracking-wide md:text-xl'
+            className='flex items-center gap-3 transition-opacity hover:opacity-90'
           >
-            <span className='flex size-10 items-center justify-center rounded-lg bg-primary/15 p-1 text-primary'>
-              <StoreIcon className='size-8' aria-hidden />
+            <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary'>
+              <StoreIcon className='h-6 w-6' />
+            </div>
+
+            <span className='font-mono text-lg font-bold uppercase tracking-wide'>
+              TechAssets
             </span>
-            <span className='leading-none'>Northwind</span>
           </Link>
         </div>
 
-        <nav className='flex items-center gap-1 md:gap-1.5'>
-          <Link to='/' className='btn btn-ghost gap-2 font-medium'>
-            <ShoppingBagIcon className='size-6 opacity-90' aria-hidden />
-            <span className='hidden sm:inline'>Shop</span>
+        {/* Nav */}
+        <nav className='flex items-center gap-1 md:gap-3'>
+          <Link to='/'>
+            <Button
+              variant='ghost'
+              className='flex items-center gap-2 font-medium'
+            >
+              <ShoppingBagIcon className='h-5 w-5 opacity-80' />
+              <span className='hidden sm:inline'>Shop</span>
+            </Button>
           </Link>
 
           <Show when={'signed-in'}>
-            <Link to='/orders' className='btn btn-ghost gap-2 font-medium'>
-              <PackageIcon className='size-6 opacity-90' aria-hidden />
-              <span className='hidden sm:inline'>Orders</span>
+            <Link to='/orders'>
+              <Button
+                variant='ghost'
+                className='flex items-center gap-2 font-medium'
+              >
+                <PackageIcon className='h-5 w-5 opacity-80' />
+                <span className='hidden sm:inline'>Orders</span>
+              </Button>
             </Link>
 
-            {role === 'admin' ? (
-              <Link
-                to='/admin'
-                className='btn btn-ghost gap-2 font-medium text-secondary'
-              >
-                <SettingsIcon className='size-6' aria-hidden />
-                <span className='hidden sm:inline'>Admin</span>
+            {role === 'admin' && (
+              <Link to='/admin'>
+                <Button
+                  variant='ghost'
+                  className='flex items-center gap-2 font-medium text-primary'
+                >
+                  <SettingsIcon className='h-5 w-5' />
+                  <span className='hidden sm:inline'>Admin</span>
+                </Button>
               </Link>
-            ) : null}
+            )}
           </Show>
 
-          <Link
-            to='/cart'
-            className='btn btn-ghost gap-2 font-medium indicator'
-            aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart'}
-          >
-            {cartCount > 0 ? (
-              <span className='indicator-item badge badge-sm badge-primary min-w-2 px-1.5 font-sans text-xs tabular-nums'>
-                {cartCount > 99 ? '99+' : cartCount}
-              </span>
-            ) : null}
-            <ShoppingCartIcon className='size-6 opacity-90' aria-hidden />
-            <span className='hidden sm:inline'>Cart</span>
+          {/* Cart */}
+          <Link to='/cart' className='relative'>
+            <Button
+              variant='ghost'
+              className='flex items-center gap-2 font-medium'
+            >
+              {cartCount > 0 && (
+                <span className='absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground'>
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+
+              <ShoppingCartIcon className='h-5 w-5 opacity-80' />
+              <span className='hidden sm:inline'>Cart</span>
+            </Button>
           </Link>
 
           <Show when={'signed-out'}>
             <SignInButton mode='modal'>
-              <Button
-                type='button'
-                className='btn btn-primary btn-sm gap-1.5 px-3 shadow-md'
-              >
-                <LogInIcon className='size-4 drop-shadow-sm' aria-hidden />
+              <Button className='gap-2 h-9 shadow-sm'>
+                <LogInIcon className='h-6 w-6' />
                 Sign in
               </Button>
             </SignInButton>
           </Show>
 
           <Show when={'signed-in'}>
-            <div className='flex items-center gap-2 border-l border-base-300 pl-3'>
+            <div className='ml-2 flex items-center gap-2 border-l pl-3'>
               <UserButton
                 appearance={{
-                  elements: { avatarBox: 'h-10 w-10 ring-2 ring-base-300' },
+                  elements: {
+                    avatarBox: 'h-10 w-10 ring-2 ring-border rounded-full',
+                  },
                 }}
               />
-              {role === 'support' || role === 'admin' ? (
-                <span className='badge badge-primary badge-sm hidden capitalize md:inline-flex'>
+
+              {(role === 'support' || role === 'admin') && (
+                <span className='hidden rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium capitalize text-primary md:inline-flex'>
                   {role}
                 </span>
-              ) : null}
+              )}
             </div>
           </Show>
         </nav>

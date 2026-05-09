@@ -1,15 +1,14 @@
 import { useState } from 'react';
+import { UploadCloudIcon, Loader2Icon } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
+import { Switch } from '../components/ui/switch';
+import { Card } from '../components/ui/card';
+import { Alert, AlertDescription } from '../components/ui/alert';
 import { uploadImageToImageKit } from '../lib/imagekitUpload.js';
 import { IK_PRESETS, imageKitOptimizedUrl } from '../lib/imageKitUrl.js';
-
-type AdminProductFormProps = {
-  initial?: any;
-  saving?: boolean;
-  error?: string | null;
-  getToken: () => Promise<string | null>;
-  onCancel: () => void;
-  onSubmit: (data: any) => void;
-};
 
 export function AdminProductForm({
   initial,
@@ -18,26 +17,35 @@ export function AdminProductForm({
   getToken,
   onCancel,
   onSubmit,
-}) : AdminProductFormProps {
+}) {
   const [slug, setSlug] = useState(initial?.slug ?? '');
   const [name, setName] = useState(initial?.name ?? '');
   const [category, setCategory] = useState(initial?.category ?? 'General');
   const [description, setDescription] = useState(initial?.description ?? '');
+
   const [priceCents, setPriceCents] = useState(
     initial ? String(initial.priceCents / 100) : '',
   );
+
   const [currency, setCurrency] = useState(initial?.currency ?? 'usd');
+
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? '');
+
   const [imageKitFileId, setImageKitFileId] = useState(
     initial?.imageKitFileId ?? '',
   );
+
   const [active, setActive] = useState(initial?.active ?? true);
+
   const [uploadingImage, setUploadingImage] = useState(false);
+
   const [uploadError, setUploadError] = useState(null);
 
   function handleSubmit(e) {
     e.preventDefault();
+
     const dollars = Number.parseFloat(priceCents);
+
     if (Number.isNaN(dollars) || dollars <= 0) return;
 
     const body = {
@@ -54,24 +62,42 @@ export function AdminProductForm({
 
     if (initial) {
       const patch = {};
+
       if (body.name !== initial.name) patch.name = body.name;
-      if (body.category !== (initial.category ?? 'General'))
+
+      if (body.category !== (initial.category ?? 'General')) {
         patch.category = body.category;
-      if (body.description !== initial.description)
+      }
+
+      if (body.description !== initial.description) {
         patch.description = body.description;
-      if (body.priceCents !== initial.priceCents)
+      }
+
+      if (body.priceCents !== initial.priceCents) {
         patch.priceCents = body.priceCents;
-      if (body.currency !== initial.currency) patch.currency = body.currency;
-      if ((body.imageUrl ?? '') !== (initial.imageUrl ?? ''))
+      }
+
+      if (body.currency !== initial.currency) {
+        patch.currency = body.currency;
+      }
+
+      if ((body.imageUrl ?? '') !== (initial.imageUrl ?? '')) {
         patch.imageUrl = body.imageUrl;
+      }
+
       if ((body.imageKitFileId ?? null) !== (initial.imageKitFileId ?? null)) {
         patch.imageKitFileId = body.imageKitFileId;
       }
-      if (body.active !== initial.active) patch.active = body.active;
+
+      if (body.active !== initial.active) {
+        patch.active = body.active;
+      }
+
       if (Object.keys(patch).length === 0) {
         onCancel();
         return;
       }
+
       onSubmit(patch);
     } else {
       onSubmit(body);
@@ -80,19 +106,23 @@ export function AdminProductForm({
 
   async function handleImageUpload(e) {
     const file = e.target.files?.[0];
+
     e.target.value = '';
+
     if (!file) return;
 
     setUploadError(null);
 
     if (file.size > 10 * 1024 * 1024) {
       setUploadError('File is too large (max 10MB).');
+
       return;
     }
 
     const ext = file.name.includes('.')
       ? file.name.slice(file.name.lastIndexOf('.'))
       : '.jpg';
+
     const base = (slug.trim() || 'product')
       .replace(/[^\w-]+/g, '-')
       .slice(0, 80);
@@ -114,53 +144,59 @@ export function AdminProductForm({
   }
 
   return (
-    <form className='mt-4 flex flex-col gap-3' onSubmit={handleSubmit}>
-      <label className='form-control w-full'>
-        <span className='label-text'>Slug</span>
-        <input
-          className='input input-bordered w-full'
+    <form className='mt-5 space-y-5' onSubmit={handleSubmit}>
+      <div className='space-y-2'>
+        <Label htmlFor='slug'>Slug</Label>
+
+        <Input
+          id='slug'
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
           required
           disabled={Boolean(initial)}
         />
-      </label>
+      </div>
 
-      <label className='form-control w-full'>
-        <span className='label-text'>Name</span>
-        <input
-          className='input input-bordered w-full'
+      <div className='space-y-2'>
+        <Label htmlFor='name'>Name</Label>
+
+        <Input
+          id='name'
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
         />
-      </label>
+      </div>
 
-      <label className='form-control w-full'>
-        <span className='label-text'>Category</span>
-        <input
-          className='input input-bordered w-full'
+      <div className='space-y-2'>
+        <Label htmlFor='category'>Category</Label>
+
+        <Input
+          id='category'
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           placeholder='e.g. Audio, Workspace'
           required
         />
-      </label>
+      </div>
 
-      <label className='form-control w-full'>
-        <span className='label-text'>Description</span>
-        <textarea
-          className='textarea textarea-bordered h-24 w-full'
+      <div className='space-y-2'>
+        <Label htmlFor='description'>Description</Label>
+
+        <Textarea
+          id='description'
+          className='min-h-28 resize-none'
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-      </label>
+      </div>
 
-      <div className='grid grid-cols-2 gap-2'>
-        <label className='form-control'>
-          <span className='label-text'>Price (USD)</span>
-          <input
-            className='input input-bordered'
+      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+        <div className='space-y-2'>
+          <Label htmlFor='price'>Price (USD)</Label>
+
+          <Input
+            id='price'
             type='number'
             step='0.01'
             min='0.01'
@@ -168,109 +204,129 @@ export function AdminProductForm({
             onChange={(e) => setPriceCents(e.target.value)}
             required
           />
-        </label>
+        </div>
 
-        <label className='form-control'>
-          <span className='label-text'>Currency</span>
-          <input
-            className='input input-bordered'
+        <div className='space-y-2'>
+          <Label htmlFor='currency'>Currency</Label>
+
+          <Input
+            id='currency'
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
             required
           />
-        </label>
+        </div>
       </div>
 
-      <div className='form-control w-full'>
-        <span className='label-text'>Image</span>
-        <label className='mb-2 flex cursor-pointer flex-wrap items-center gap-2'>
-          <span className='btn btn-secondary btn-sm shrink-0'>
-            {uploadingImage ? (
-              <span className='loading loading-spinner loading-xs' />
-            ) : (
-              'Upload to ImageKit'
-            )}
-          </span>
+      <div className='space-y-3'>
+        <Label>Product Image</Label>
 
-          <span className='text-xs text-base-content/60'>
-            PNG, JPG, WebP, GIF · max 10MB
-          </span>
-
-          <input
-            type='file'
-            accept='image/png,image/jpeg,image/webp,image/gif'
-            className='hidden'
+        <div className='flex flex-wrap items-center gap-3'>
+          <Button
+            type='button'
+            variant='secondary'
             disabled={uploadingImage || saving}
-            onChange={handleImageUpload}
+            className='relative overflow-hidden'
+          >
+            {uploadingImage ? (
+              <>
+                <Loader2Icon className='mr-2 size-4 animate-spin' />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <UploadCloudIcon className='mr-2 size-4' />
+                Upload to ImageKit
+              </>
+            )}
+
+            <input
+              type='file'
+              accept='image/png,image/jpeg,image/webp,image/gif'
+              className='absolute inset-0 cursor-pointer opacity-0'
+              disabled={uploadingImage || saving}
+              onChange={handleImageUpload}
+            />
+          </Button>
+
+          <p className='text-xs text-muted-foreground'>
+            PNG, JPG, WebP, GIF · max 10MB
+          </p>
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='image-url'>Image URL</Label>
+
+          <Input
+            id='image-url'
+            type='url'
+            value={imageUrl}
+            onChange={(e) => {
+              const v = e.target.value;
+
+              if (v !== imageUrl) {
+                setImageKitFileId('');
+              }
+
+              setImageUrl(v);
+            }}
+            placeholder='https://example.com/image.jpg'
           />
-        </label>
-
-        <label className='label py-0'>
-          <span className='label-text-alt text-base-content/60'>
-            Image URL (any HTTPS URL)
-          </span>
-        </label>
-
-        <input
-          className='input input-bordered w-full'
-          type='url'
-          value={imageUrl}
-          onChange={(e) => {
-            const v = e.target.value;
-            if (v !== imageUrl) setImageKitFileId('');
-            setImageUrl(v);
-          }}
-          placeholder='https://...'
-        />
+        </div>
 
         {uploadError ? (
-          <span className='mt-1 text-xs text-error' role='alert'>
-            {uploadError}
-          </span>
+          <Alert variant='destructive'>
+            <AlertDescription>{uploadError}</AlertDescription>
+          </Alert>
         ) : null}
+
         {imageUrl ? (
-          <div className='mt-2 overflow-hidden rounded-lg border border-base-300 bg-base-200 p-2'>
+          <Card className='overflow-hidden p-3'>
             <img
               src={imageKitOptimizedUrl(imageUrl, IK_PRESETS.formPreview)}
-              alt=''
-              className='mx-auto max-h-32 w-auto object-contain'
+              alt='Preview'
+              className='mx-auto max-h-40 w-auto rounded-md object-contain'
               decoding='async'
             />
-          </div>
+          </Card>
         ) : null}
       </div>
 
-      <label className='label cursor-pointer justify-start gap-3'>
-        <input
-          type='checkbox'
-          className='toggle toggle-primary'
-          checked={active}
-          onChange={(e) => setActive(e.target.checked)}
-        />
-        <span className='label-text'>Active in store</span>
-      </label>
+      <div className='flex items-center justify-between rounded-lg border p-4'>
+        <div>
+          <p className='font-medium'>Active in store</p>
+
+          <p className='text-sm text-muted-foreground'>
+            Customers can purchase this product.
+          </p>
+        </div>
+
+        <Switch checked={active} onCheckedChange={setActive} />
+      </div>
 
       {error ? (
-        <div role='alert' className='alert alert-error text-sm'>
-          Save failed (check slug unique &amp; fields).
-        </div>
+        <Alert variant='destructive'>
+          <AlertDescription>
+            Save failed. Check slug uniqueness & fields.
+          </AlertDescription>
+        </Alert>
       ) : null}
 
-      <div className='modal-action'>
-        <button type='button' className='btn btn-ghost' onClick={onCancel}>
+      <div className='flex justify-end gap-3 pt-2'>
+        <Button type='button' variant='outline' onClick={onCancel}>
           Cancel
-        </button>
-        <button
-          type='submit'
-          className='btn btn-primary'
-          disabled={saving || uploadingImage}
-        >
+        </Button>
+
+        <Button type='submit' disabled={saving || uploadingImage}>
           {saving ? (
-            <span className='loading loading-spinner loading-sm' />
+            <>
+              <Loader2Icon className='mr-2 size-4 animate-spin' />
+              Saving...
+            </>
           ) : (
-            'Save'
+            'Save Product'
           )}
-        </button>
+        </Button>
       </div>
     </form>
   );

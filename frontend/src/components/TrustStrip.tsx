@@ -30,17 +30,25 @@ const items = [
 
 export function TrustStrip() {
   return (
-    <section className='grid gap-4 rounded-box border border-base-300 bg-base-100 p-6 sm:grid-cols-2 lg:grid-cols-4'>
+    <section className='grid gap-4 rounded-3xl border bg-background p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4'>
       {items.map(({ icon, title, desc }) => {
         const IconCmp = icon;
+
         return (
-          <div key={title} className='flex gap-3'>
-            <div className='flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary'>
-              <IconCmp className='size-5' aria-hidden />
+          <div
+            key={title}
+            className='flex gap-4 rounded-2xl p-2 transition-colors hover:bg-muted/40'
+          >
+            <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary'>
+              <IconCmp className='h-5 w-5' />
             </div>
+
             <div>
-              <h3 className='font-semibold text-base-content'>{title}</h3>
-              <p className='mt-0.5 text-sm text-base-content/65'>{desc}</p>
+              <h3 className='font-semibold text-foreground'>{title}</h3>
+
+              <p className='mt-1 text-sm leading-relaxed text-muted-foreground'>
+                {desc}
+              </p>
             </div>
           </div>
         );

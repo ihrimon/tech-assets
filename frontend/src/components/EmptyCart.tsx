@@ -1,32 +1,41 @@
 import { ArrowRightIcon, PackageIcon, ShoppingCartIcon } from 'lucide-react';
 import { Link } from 'react-router';
+import { Button } from '../components/ui/button';
+import { Card, CardContent } from '../components/ui/card';
 
 export default function EmptyCart() {
   return (
-    <div className='mx-auto max-w-lg rounded-2xl border border-dashed border-base-300 bg-linear-to-b from-base-200/50 to-base-100 px-6 py-12 text-center sm:px-10 sm:py-16'>
-      <div className='mx-auto mb-6 flex size-20 items-center justify-center rounded-full bg-base-300/60 text-primary/80 ring-4 ring-base-200/80'>
-        <ShoppingCartIcon className='size-10' aria-hidden />
-      </div>
-      <h2 className='text-xl font-semibold tracking-tight text-base-content sm:text-2xl'>
-        Your cart is empty
-      </h2>
-      <p className='mt-2 text-sm leading-relaxed text-base-content/65'>
-        When you add products from the catalog, they&apos;ll show up here. Ready
-        when you are.
-      </p>
-      <div className='mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center'>
-        <Link to='/#catalog' className='btn btn-primary gap-2 shadow-md'>
-          Browse catalog
-          <ArrowRightIcon className='size-4' aria-hidden />
-        </Link>
-        <Link
-          to='/orders'
-          className='btn btn-ghost gap-2 border border-white bg-base-100 hover:border-primary/35 hover:bg-base-200/50'
-        >
-          <PackageIcon className='size-4' aria-hidden />
-          View orders
-        </Link>
-      </div>
-    </div>
+    <Card className='mx-auto max-w-lg border-dashed bg-gradient-to-b from-muted/40 to-background shadow-sm'>
+      <CardContent className='px-6 py-12 text-center sm:px-10 sm:py-16'>
+        <div className='mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-muted text-primary ring-4 ring-muted/70'>
+          <ShoppingCartIcon className='h-10 w-10' aria-hidden />
+        </div>
+
+        <h2 className='text-xl font-semibold tracking-tight sm:text-2xl'>
+          Your cart is empty
+        </h2>
+
+        <p className='mt-2 text-sm leading-relaxed text-muted-foreground'>
+          When you add products from the catalog, they&apos;ll show up here.
+          Ready when you are.
+        </p>
+
+        <div className='mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center'>
+          <Button className='gap-2 shadow-md'>
+            <Link to='/catalog' className='flex items-center gap-1'>
+              Browse catalog
+              <ArrowRightIcon className='h-4 w-4' aria-hidden />
+            </Link>
+          </Button>
+
+          <Button variant='outline' className='gap-2'>
+            <Link to='/orders' className='flex items-center gap-1'>
+              <PackageIcon className='h-4 w-4' aria-hidden />
+              View orders
+            </Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

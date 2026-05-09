@@ -1,3 +1,5 @@
+import { Button } from '../components/ui/button';
+import { Skeleton } from '../components/ui/skeleton';
 import { CatalogProductCard } from '../components/CatalogProductCard';
 import { HomeHero } from '../components/HomeHero';
 import { PageError } from '../components/PageError';
@@ -16,72 +18,71 @@ function HomePage() {
     setCategory,
   } = useHomeCatalog();
 
-  console.log('HomePage render', {
-    products,
-    categories,
-  });
-
   return (
     <div className='space-y-12'>
       <HomeHero categories={categories} loadingCategories={loadingCategories} />
 
       <TrustStrip />
 
-      {/* CATELOG */}
-      <section id='catolag' className='scroll-mt-24'>
-        <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between'>
+      {/* Catalog */}
+      <section id='catalog' className='scroll-mt-24'>
+        <div className='mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between'>
           <div>
-            <h2 className='text-2xl font-bold text-base-content md:text-2xl uppercase font-mono'>
+            <h2 className='font-mono text-3xl font-bold uppercase tracking-wide text-foreground'>
               Catalog
             </h2>
+
+            <p className='mt-2 text-sm text-muted-foreground'>
+              Explore curated tools, devices, and workspace gear.
+            </p>
           </div>
 
+          {/* Category Filter */}
           <div className='flex flex-wrap gap-2'>
-            <button
-              type='button'
-              className={`btn btn-sm ${!categoryFilter ? 'btn-primary' : 'btn-ghost border border-base-300'}`}
+            <Button
+              size='sm'
+              variant={!categoryFilter ? 'default' : 'outline'}
               onClick={() => setCategory('')}
             >
               All
-            </button>
+            </Button>
 
             {categoryChipsLoading
               ? [1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className='skeleton h-8 w-20 rounded-lg'
-                    aria-hidden
-                  />
+                  <Skeleton key={i} className='h-9 w-20 rounded-lg' />
                 ))
               : categories.map((c: string) => (
-                  <button
+                  <Button
                     key={c}
-                    type='button'
-                    className={`btn btn-sm ${categoryFilter === c ? 'btn-primary' : 'btn-ghost border border-base-300'}`}
+                    size='sm'
+                    variant={categoryFilter === c ? 'default' : 'outline'}
                     onClick={() => setCategory(c)}
                   >
                     {c}
-                  </button>
+                  </Button>
                 ))}
           </div>
         </div>
 
+        {/* Loading */}
         {loadingList ? (
           <ul className='grid gap-6 sm:grid-cols-2 xl:grid-cols-3'>
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <li key={i}>
-                <div className='skeleton h-96 w-full rounded-box' />
+                <Skeleton className='h-100 w-full rounded-3xl' />
               </li>
             ))}
           </ul>
         ) : error ? (
           <PageError message="We couldn't load products. Please try again in a moment." />
         ) : products.length === 0 ? (
-          <div className='rounded-box border border-base-300 bg-base-100 py-16 text-center text-base-content/60'>
-            No products in this category yet.
+          <div className='rounded-3xl border py-20 text-center'>
+            <p className='text-muted-foreground'>
+              No products in this category yet.
+            </p>
           </div>
         ) : (
-          <ul className='grid gap-6 sm:grid-cols-2 xl:grid-cols-3'>
+          <ul className='grid gap-6 md:grid-cols-3 lg:grid-cols-4'>
             {products.map((p: any) => (
               <li key={p.id}>
                 <CatalogProductCard product={p} />
@@ -93,4 +94,5 @@ function HomePage() {
     </div>
   );
 }
+
 export default HomePage;

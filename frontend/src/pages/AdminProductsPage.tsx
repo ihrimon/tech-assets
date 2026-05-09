@@ -1,9 +1,25 @@
+// AdminProductsPage.tsx
+
 import { PackageIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+
 import { Navigate } from 'react-router';
+
 import { formatPrice } from '../utils/format.js';
 import { useAdminProductsPage } from '../hooks/useAdminProductsPage.js';
 import { AdminProductsTableSkeleton } from '../components/LoadingSkeleton.js';
+
 import { IK_PRESETS, imageKitOptimizedUrl } from '../lib/imageKitUrl.js';
+
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
+
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
 import { AdminProductForm } from '../components/AdminProductForm.js';
 
 function AdminProductsPage() {
@@ -33,50 +49,56 @@ function AdminProductsPage() {
   return (
     <div className='text-left'>
       <div className='mb-6 flex flex-wrap items-center justify-between gap-4'>
-        <div className='flex items-center gap-2'>
-          <PackageIcon className='size-8 text-secondary' aria-hidden />
+        <div className='flex items-center gap-3'>
+          <PackageIcon className='h-8 w-8 text-primary' />
+
           <div>
-            <h1 className='text-2xl font-bold text-base-content'>Products</h1>
-            <p className='text-sm text-base-content/60'>
+            <h1 className='text-2xl font-bold'>Products</h1>
+
+            <p className='text-sm text-muted-foreground'>
               Manage catalog (admin only).
             </p>
           </div>
         </div>
-        <button
-          type='button'
-          className='btn btn-primary btn-sm gap-2'
+
+        <Button
+          size='sm'
+          className='gap-2'
           onClick={() => {
             setEditing(null);
             setModalOpen(true);
           }}
         >
-          <PlusIcon className='size-4' aria-hidden />
+          <PlusIcon className='h-4 w-4' />
           Add product
-        </button>
+        </Button>
       </div>
 
       {isLoading ? (
         <AdminProductsTableSkeleton />
       ) : (
-        <div className='overflow-x-auto rounded-box border border-base-300 bg-base-100'>
-          <table className='table table-zebra'>
-            <thead>
+        <div className='overflow-x-auto rounded-2xl border bg-card'>
+          <table className='w-full text-sm'>
+            <thead className='border-b bg-muted/50'>
               <tr>
-                <th className='w-24'>Preview</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Slug</th>
-                <th>Price</th>
-                <th>Active</th>
-                <th />
+                <th className='p-4 text-left font-medium'>Preview</th>
+                <th className='p-4 text-left font-medium'>Name</th>
+                <th className='p-4 text-left font-medium'>Category</th>
+                <th className='p-4 text-left font-medium'>Slug</th>
+                <th className='p-4 text-left font-medium'>Price</th>
+                <th className='p-4 text-left font-medium'>Active</th>
+                <th className='p-4 text-right font-medium'>Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {products.map((p) => (
-                <tr key={p.id}>
-                  <td className='align-middle'>
-                    <div className='relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-base-300 bg-base-200 shadow-sm ring-1 ring-base-300/50 sm:h-18 sm:w-18'>
+                <tr
+                  key={p.id}
+                  className='border-b transition-colors hover:bg-muted/40'
+                >
+                  <td className='p-4'>
+                    <div className='relative h-16 w-16 overflow-hidden rounded-xl border bg-muted shadow-sm'>
                       {p.imageUrl ? (
                         <img
                           src={imageKitOptimizedUrl(
@@ -85,51 +107,58 @@ function AdminProductsPage() {
                           )}
                           alt=''
                           className='h-full w-full object-cover'
-                          loading='lazy'
-                          decoding='async'
                         />
                       ) : (
-                        <div className='flex h-full w-full items-center justify-center bg-linear-to-br from-base-300 to-base-200'>
-                          <PackageIcon
-                            className='size-6 text-base-content/35'
-                            aria-hidden
-                          />
+                        <div className='flex h-full w-full items-center justify-center bg-linear-to-br from-muted to-muted/60'>
+                          <PackageIcon className='h-6 w-6 text-muted-foreground/50' />
                         </div>
                       )}
                     </div>
                   </td>
-                  <td className='font-medium'>{p.name}</td>
-                  <td>
-                    <span className='badge badge-ghost badge-sm'>
-                      {p.category ?? '-'}
-                    </span>
+
+                  <td className='p-4 font-medium'>{p.name}</td>
+
+                  <td className='p-4'>
+                    <Badge variant='secondary'>{p.category ?? '-'}</Badge>
                   </td>
-                  <td className='font-mono text-sm opacity-80'>{p.slug}</td>
-                  <td>{formatPrice(p.priceCents, p.currency)}</td>
-                  <td>
+
+                  <td className='p-4 font-mono text-sm text-muted-foreground'>
+                    {p.slug}
+                  </td>
+
+                  <td className='p-4'>
+                    {formatPrice(p.priceCents, p.currency)}
+                  </td>
+
+                  <td className='p-4'>
                     {p.active ? (
-                      <span className='badge badge-success badge-sm'>yes</span>
+                      <Badge className='bg-green-600 hover:bg-green-600'>
+                        yes
+                      </Badge>
                     ) : (
-                      <span className='badge badge-ghost badge-sm'>no</span>
+                      <Badge variant='outline'>no</Badge>
                     )}
                   </td>
-                  <td>
-                    <div className='flex flex-wrap items-center justify-end gap-1'>
-                      <button
-                        type='button'
-                        className='btn btn-ghost btn-xs gap-1'
+
+                  <td className='p-4'>
+                    <div className='flex justify-end gap-2'>
+                      <Button
+                        size='sm'
+                        variant='ghost'
+                        className='gap-1'
                         onClick={() => {
                           setEditing(p);
                           setModalOpen(true);
                         }}
                       >
-                        <PencilIcon className='size-3' aria-hidden />
+                        <PencilIcon className='h-3 w-3' />
                         Edit
-                      </button>
+                      </Button>
 
-                      <button
-                        type='button'
-                        className='btn btn-ghost btn-xs gap-1 text-error hover:bg-error/10'
+                      <Button
+                        size='sm'
+                        variant='ghost'
+                        className='gap-1 text-destructive hover:text-destructive'
                         disabled={
                           deleteMutation.isPending &&
                           deleteMutation.variables === p.id
@@ -138,12 +167,12 @@ function AdminProductsPage() {
                       >
                         {deleteMutation.isPending &&
                         deleteMutation.variables === p.id ? (
-                          <span className='loading loading-spinner loading-xs' />
+                          <span className='h-3 w-3 animate-spin rounded-full border border-current border-t-transparent' />
                         ) : (
-                          <Trash2Icon className='size-3' aria-hidden />
+                          <Trash2Icon className='h-3 w-3' />
                         )}
                         Delete
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -153,11 +182,22 @@ function AdminProductsPage() {
         </div>
       )}
 
-      <dialog className={`modal ${modalOpen ? 'modal-open' : ''}`}>
-        <div className='modal-box max-w-lg'>
-          <h3 className='text-lg font-bold'>
-            {editing ? 'Edit product' : 'New product'}
-          </h3>
+      <Dialog
+        open={modalOpen}
+        onOpenChange={(open) => {
+          setModalOpen(open);
+
+          if (!open) {
+            setEditing(null);
+          }
+        }}
+      >
+        <DialogContent className='sm:max-w-lg'>
+          <DialogHeader>
+            <DialogTitle>
+              {editing ? 'Edit product' : 'New product'}
+            </DialogTitle>
+          </DialogHeader>
 
           <AdminProductForm
             key={editing?.id ?? 'new'}
@@ -169,19 +209,15 @@ function AdminProductsPage() {
               setModalOpen(false);
               setEditing(null);
             }}
-            onSubmit={(body) => saveMutation.mutate({ body, id: editing?.id })}
+            onSubmit={(body) =>
+              saveMutation.mutate({
+                body,
+                id: editing?.id,
+              })
+            }
           />
-        </div>
-
-        <button
-          type='button'
-          className='modal-backdrop bg-neutral/50'
-          onClick={() => {
-            setModalOpen(false);
-            setEditing(null);
-          }}
-        />
-      </dialog>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

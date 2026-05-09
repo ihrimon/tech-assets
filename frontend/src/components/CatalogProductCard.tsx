@@ -1,60 +1,73 @@
 import { PlusIcon } from 'lucide-react';
 import { Link } from 'react-router';
+import { Button } from '../components/ui/button';
+import { Card, CardContent } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
 import { useCart } from '../store/cart.js';
 import { formatPrice } from '../utils/format.js';
 import { IK_PRESETS, imageKitOptimizedUrl } from '../lib/imageKitUrl.js';
 
-export function CatalogProductCard({ product }: any) {
-  const addItem = useCart((s: any) => s.addItem);
+export function CatalogProductCard({ product }: { product: any }) {
+  const addItem = useCart((s) => s.addItem);
 
   return (
-    <article className='card group h-full overflow-hidden border border-base-300 bg-base-100 shadow-md transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-xl'>
+    <Card className='group flex h-full flex-col overflow-hidden border transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl'>
       <Link
         to={`/product/${product.slug}`}
         className='relative block overflow-hidden'
       >
-        <figure className='aspect-4/3 bg-base-300'>
+        <figure className='aspect-4/3 bg-muted'>
           {product.imageUrl ? (
             <img
               src={imageKitOptimizedUrl(
                 product.imageUrl,
                 IK_PRESETS.catalogCard,
               )}
-              alt=''
+              alt={product.name}
               className='h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]'
               loading='lazy'
               decoding='async'
             />
-          ) : null}
+          ) : (
+            <div className='h-full w-full bg-muted' />
+          )}
         </figure>
-        <span className='badge badge-sm absolute left-3 top-3 border-0 bg-base-100/90 text-xs font-medium text-base-content/80 backdrop-blur'>
+
+        <Badge
+          variant='secondary'
+          className='absolute left-3 top-3 border bg-background/90 backdrop-blur'
+        >
           {product.category ?? 'General'}
-        </span>
+        </Badge>
       </Link>
-      <div className='card-body grow gap-3 p-5 text-left'>
+
+      <CardContent className='flex grow flex-col gap-3 p-5 text-left'>
         <Link
           to={`/product/${product.slug}`}
-          className='card-title line-clamp-2 text-lg transition group-hover:text-primary'
+          className='line-clamp-2 text-lg font-semibold transition-colors hover:text-primary'
         >
           {product.name}
         </Link>
-        <p className='line-clamp-3 text-sm leading-relaxed text-base-content/70'>
+
+        <p className='line-clamp-3 text-sm leading-relaxed text-muted-foreground'>
           {product.description}
         </p>
-        <div className='card-actions mt-auto items-center justify-between border-t border-base-200 pt-4'>
-          <span className='text-lg font-bold tabular-nums text-base-content'>
+
+        <div className='mt-auto flex items-center justify-between border-t pt-4'>
+          <span className='text-lg font-bold tabular-nums text-foreground'>
             {formatPrice(product.priceCents, product.currency)}
           </span>
-          <button
-            type='button'
+
+          <Button
+            size='sm'
+            className='gap-1'
             onClick={() => addItem(product.id)}
-            className='btn btn-primary btn-sm gap-1 shadow'
           >
-            <PlusIcon className='size-4' aria-hidden />
+            <PlusIcon className='size-4' />
             Add
-          </button>
+          </Button>
         </div>
-      </div>
-    </article>
+      </CardContent>
+    </Card>
   );
 }
