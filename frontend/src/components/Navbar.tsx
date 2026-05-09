@@ -11,6 +11,7 @@ import {
   ShoppingCartIcon,
   StoreIcon,
 } from 'lucide-react';
+import { Button } from './ui/button';
 
 const Navbar = () => {
   const { getToken, isSignedIn } = useAuth();
@@ -83,13 +84,13 @@ const Navbar = () => {
 
           <Show when={'signed-out'}>
             <SignInButton mode='modal'>
-              <button
+              <Button
                 type='button'
                 className='btn btn-primary btn-sm gap-1.5 px-3 shadow-md'
               >
                 <LogInIcon className='size-4 drop-shadow-sm' aria-hidden />
                 Sign in
-              </button>
+              </Button>
             </SignInButton>
           </Show>
 
